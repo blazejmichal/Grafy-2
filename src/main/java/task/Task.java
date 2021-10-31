@@ -264,7 +264,6 @@ public class Task implements PointSorter {
           }
         }
       }
-      // rownie dobrze ten warunek moze byc ze odfiltruj pierwszy punkt o innych wspolrzednych, jesli wystapi 2x o takich samych wspolrzednych to nie zostanie usuniety ten wlasciwy do porownania
       if(!point1.getId().equals(this.middlePointAmongSortedByX.getId())){
         if (this.calculateDistance(point1, this.middlePointAmongSortedByX) <= closestPoints.getDistance()) {
           closestPoints.setDistance(this.calculateDistance(point1, this.middlePointAmongSortedByX));
