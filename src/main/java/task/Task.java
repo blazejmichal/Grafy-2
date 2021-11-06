@@ -24,14 +24,10 @@ public class Task implements PointSorter {
   private List<Point> s2SortedByX = Lists.newArrayList();
   private List<Point> s1SortedByY = Lists.newLinkedList();
   private List<Point> s2SortedByY = Lists.newLinkedList();
-  // moje lowest_s1
   private ClosestPoints closestPointsInS1;
-  // moje lowest_s2
   private ClosestPoints closestPointsInS2;
   private Double lowestDistanceInS1AndS2;
-  // czy napewno tak to nazwac?
   private List<Point> s3LeftHalf = Lists.newLinkedList();
-  // czy napewno tak to nazwac?
   private List<Point> s3RightHalf = Lists.newLinkedList();
   private ClosestPoints closestPointsInS3;
   private ClosestPoints closestPointsInS3LeftToRight;

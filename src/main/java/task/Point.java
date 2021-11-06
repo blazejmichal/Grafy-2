@@ -19,9 +19,6 @@ public class Point {
     this.y = y;
   }
 
-  /*
-    czemu w zasadzie * a potem / ???
-     */
   public String toString() {
     return String.format(
         "(%s, %s)",
