@@ -33,14 +33,15 @@ public class Task implements PointSorter {
   private ClosestPoints closestPointsInS3LeftToRight;
   private ClosestPoints closestPointsInS3RightToLeft;
   private ClosestPoints result;
+  private ClosestPoints temporaryClosestPoints;
 
   public Task(List<Point> points) {
     this.points = points;
     this.run();
   }
 
-  public void run() {
-
+  public void run(
+  ) {
     try {
       this.validateInput();
       this.handleCornerCase();
@@ -54,8 +55,20 @@ public class Task implements PointSorter {
       this.fillS2SortedByX();
       this.fillS1SortedByY();
       this.fillS2SortedByY();
-      this.closestPointsInS1 = this.findClosestPoints(this.s1SortedByX);
-      this.closestPointsInS2 = this.findClosestPoints(this.s2SortedByX);
+      this.findClosestPointsRec(this.s1SortedByX);
+      this.closestPointsInS1 = new ClosestPoints(
+          this.temporaryClosestPoints.getFirst(),
+          this.temporaryClosestPoints.getSecond(),
+          this.temporaryClosestPoints.getDistance()
+      );
+      this.temporaryClosestPoints = null;
+      this.findClosestPointsRec(this.s2SortedByX);
+      this.closestPointsInS2 = new ClosestPoints(
+          this.temporaryClosestPoints.getFirst(),
+          this.temporaryClosestPoints.getSecond(),
+          this.temporaryClosestPoints.getDistance()
+      );
+      this.temporaryClosestPoints = null;
       this.findLowestDistanceInS1AndS2();
       this.fillS3(
           this.s1SortedByY,
@@ -82,25 +95,25 @@ public class Task implements PointSorter {
     }
   }
 
-  public void validateInput() throws Exception {
-
+  public void validateInput(
+  ) throws Exception {
     if (this.points.size() < 2) {
       throw new Exception("Invalid input");
     }
   }
 
-  public void findMiddleIndexAmongSortedByX() {
-
+  public void findMiddleIndexAmongSortedByX(
+  ) {
     this.middleIndexAmongSortedByX = this.pointsSortedByX.size() / 2;
   }
 
-  public void findMiddlePointAmongSortedByX() {
-
+  public void findMiddlePointAmongSortedByX(
+  ) {
     this.middlePointAmongSortedByX = this.pointsSortedByX.get(this.middleIndexAmongSortedByX);
   }
 
-  public void fillS1SortedByX() {
-
+  public void fillS1SortedByX(
+  ) {
     List<Point> pointsForFilling = this.pointsSortedByX.subList(
         0,
         this.middleIndexAmongSortedByX
@@ -108,8 +121,8 @@ public class Task implements PointSorter {
     this.s1SortedByX.addAll(pointsForFilling);
   }
 
-  public void fillS2SortedByX() {
-
+  public void fillS2SortedByX(
+  ) {
     List<Point> pointsForFilling = this.pointsSortedByX.subList(
         this.middleIndexAmongSortedByX,
         this.pointsSortedByX.size()
@@ -117,8 +130,8 @@ public class Task implements PointSorter {
     this.s2SortedByX.addAll(pointsForFilling);
   }
 
-  public void fillS1SortedByY() {
-
+  public void fillS1SortedByY(
+  ) {
     List<Point> pointsForFilling = this.pointsSortedByY
         .stream()
         .filter(point -> this.compare(point, this.middlePointAmongSortedByX))
@@ -126,8 +139,8 @@ public class Task implements PointSorter {
     this.s1SortedByY.addAll(pointsForFilling);
   }
 
-  public void fillS2SortedByY() {
-
+  public void fillS2SortedByY(
+  ) {
     List<Point> pointsForFilling = Lists.newArrayList(this.pointsSortedByY);
     pointsForFilling.removeAll(this.s1SortedByY);
     this.s2SortedByY.addAll(pointsForFilling);
@@ -137,7 +150,6 @@ public class Task implements PointSorter {
       Point left,
       Point right
   ) {
-
     if ((left.getX() < right.getX()) || (left.getX() == right.getX()
         && left.getY() < right.getY())) {
       return true;
@@ -149,8 +161,13 @@ public class Task implements PointSorter {
     }
   }
 
-  public ClosestPoints findClosestPoints(List<Point> points) {
-
+  public ClosestPoints findClosestPoints(
+      List<Point> points
+  ) {
+    if (points.size() > 3) {
+      return null;
+    }
+    // TODO: Jest for w forze, ale points moze miec maksymalnie 3 punkty
     List<ClosestPoints> pointDistances = Lists.newLinkedList();
     for (int i = 0; i < points.size(); i++) {
       for (int j = 0; j < points.size(); j++) {
@@ -173,19 +190,43 @@ public class Task implements PointSorter {
     return result;
   }
 
+  public void findClosestPointsRec(
+      List<Point> points
+  ) {
+    if (points.size() <= 3) {
+      ClosestPoints closestPoints = this.findClosestPoints(points);
+      if (this.temporaryClosestPoints == null) {
+        this.temporaryClosestPoints = closestPoints;
+      } else if (this.temporaryClosestPoints.getDistance() > closestPoints.getDistance()) {
+        this.temporaryClosestPoints = closestPoints;
+      }
+    } else {
+      int middleIndex = points.size() / 2;
+      List<Point> left = points.subList(
+          0,
+          middleIndex
+      );
+      List<Point> right = points.subList(
+          middleIndex,
+          points.size()
+      );
+      this.findClosestPointsRec(left);
+      this.findClosestPointsRec(right);
+    }
+  }
+
   public Double calculateDistance(
       Point left,
       Point right
   ) {
-
     Double result = Math.sqrt(
         Math.pow(right.getX() - left.getX(), 2) + Math.pow(right.getY() - left.getY(), 2));
 
     return result;
   }
 
-  public void findLowestDistanceInS1AndS2() {
-
+  public void findLowestDistanceInS1AndS2(
+  ) {
     if (this.closestPointsInS1 != null && this.closestPointsInS2 != null) {
       this.lowestDistanceInS1AndS2 = Math.min(
           this.closestPointsInS1.getDistance(),
@@ -204,7 +245,6 @@ public class Task implements PointSorter {
       List<Point> source,
       List<Point> target
   ) {
-
     Double difference = 0d;
     for (Point point : source) {
       difference = this.middlePointAmongSortedByX.getX() - point.getX();
@@ -215,8 +255,8 @@ public class Task implements PointSorter {
     }
   }
 
-  public void findClosestPointsInS3() {
-
+  public void findClosestPointsInS3(
+  ) {
     if (this.closestPointsInS3LeftToRight == null && this.closestPointsInS3RightToLeft == null) {
       this.closestPointsInS3 = null;
     } else if (this.closestPointsInS3LeftToRight == null) {
@@ -236,7 +276,6 @@ public class Task implements PointSorter {
       List<Point> firstPointList,
       List<Point> secondPointList
   ) {
-
     if (this.lowestDistanceInS1AndS2 == null) {
       return null;
     }
@@ -260,8 +299,9 @@ public class Task implements PointSorter {
           }
         }
       }
-      if(!point1.getId().equals(this.middlePointAmongSortedByX.getId())){
-        if (this.calculateDistance(point1, this.middlePointAmongSortedByX) <= closestPoints.getDistance()) {
+      if (!point1.getId().equals(this.middlePointAmongSortedByX.getId())) {
+        if (this.calculateDistance(point1, this.middlePointAmongSortedByX)
+            <= closestPoints.getDistance()) {
           closestPoints.setDistance(this.calculateDistance(point1, this.middlePointAmongSortedByX));
           closestPoints.setFirst(point1);
           closestPoints.setSecond(this.middlePointAmongSortedByX);
@@ -274,8 +314,8 @@ public class Task implements PointSorter {
     return closestPoints;
   }
 
-  public void findResult() {
-
+  public void findResult(
+  ) {
     List<ClosestPoints> closestPoints = Lists.newArrayList(
         this.closestPointsInS1,
         this.closestPointsInS2,
@@ -288,8 +328,8 @@ public class Task implements PointSorter {
         .orElse(null);
   }
 
-  public void handleCornerCase() throws Exception {
-
+  public void handleCornerCase(
+  ) throws Exception {
     List<ClosestPoints> pointsToVerify = Lists.newLinkedList();
     if (this.points.size() == 3 || this.points.size() == 2) {
       for (int i = 0; i < this.points.size() - 1; i++) {

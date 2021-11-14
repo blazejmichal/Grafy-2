@@ -6,6 +6,54 @@ public class Main {
 
   public static void main(String[] args) {
 
+    Task task1 = new Task(
+        Lists.newArrayList(
+            new Point(1d, 1d),
+            new Point(1d, 2d),
+            new Point(1d, 3d),
+            new Point(1d, 4d),
+            new Point(1d, 5d),
+            new Point(1d, 6d),
+            new Point(1d, 7d),
+            new Point(1d, 8d),
+            new Point(1d, 9d),
+            new Point(1d, 10d)
+        )
+    );
+
+    Task task2 = new Task(
+        Lists.newArrayList(
+            new Point(1d, 1d),
+            new Point(2d, 1d),
+            new Point(3d, 1d),
+            new Point(4d, 1d),
+            new Point(5d, 1d),
+            new Point(6d, 1d),
+            new Point(7d, 1d),
+            new Point(8d, 1d),
+            new Point(9d, 1d),
+            new Point(10d, 1d)
+        )
+    );
+
+    Task task3 = new Task(
+        Lists.newArrayList(
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d),
+            new Point(1d, 1d)
+        )
+    );
+
     Task taskPPP = new Task(
         Lists.newArrayList(
             new Point(10000d, 10000d),
